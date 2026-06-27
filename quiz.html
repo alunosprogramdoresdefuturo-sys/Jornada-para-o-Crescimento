@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Cultive Sua Árvore</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+body{
+    margin:0;
+    font-family:'Poppins',sans-serif;
+    background:linear-gradient(135deg,#fff5f4,#fbe8e6);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:100vh;
+}
+
+.container{
+    width:100%;
+    max-width:650px;
+    background:#fff;
+    border-radius:25px;
+    padding:35px;
+    box-shadow:0 20px 60px rgba(0,0,0,.1);
+    text-align:center;
+}
+
+h1{
+    color:#DB9691;
+    margin-bottom:10px;
+}
+
+p{
+    color:#666;
+    font-size:14px;
+    margin-bottom:20px;
+}
+
+.progress{
+    width:100%;
+    height:10px;
+    background:#f3e1df;
+    border-radius:50px;
+    overflow:hidden;
+    margin-bottom:10px;
+}
+
+.progress-bar{
+    height:100%;
+    width:0%;
+    background:#DB9691;
+    transition:.3s;
+}
+
+.question-number{
+    font-size:13px;
+    color:#888;
+    margin-bottom:20px;
+}
+
+.question{
+    font-size:20px;
+    margin-bottom:20px;
+    color:#333;
+}
+
+.btn{
+    width:100%;
+    padding:14px;
+    margin:10px 0;
+    border:none;
+    border-radius:15px;
+    background:#f7d9d6;
+    color:#333;
+    cursor:pointer;
+    font-size:15px;
+    transition:.3s;
+}
+
+.btn:hover{
+    background:#DB9691;
+    color:white;
+    transform:scale(1.02);
+}
+
+.result{
+    display:none;
+}
+
+.tree{
+    font-size:80px;
+    margin-bottom:10px;
+    animation:grow .8s ease;
+}
+
+@keyframes grow{
+    from{transform:scale(.5);opacity:0;}
+    to{transform:scale(1);opacity:1;}
+}
+
+.restart{
+    margin-top:20px;
+    padding:12px 25px;
+    border:none;
+    background:#DB9691;
+    color:white;
+    border-radius:30px;
+    cursor:pointer;
+}
+
+.restart:hover{
+    background:#c97f78;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>🌳 Cultive Sua Árvore</h1>
+
+<p>Descubra em que estágio está sua jornada de desenvolvimento pessoal</p>
+
+<div class="progress">
+    <div id="bar" class="progress-bar"></div>
+</div>
+
+<div id="counter" class="question-number"></div>
+
+<div id="quiz">
+
+    <div id="question" class="question"></div>
+
+    <div id="answers"></div>
+
+</div>
+
+<div id="result" class="result">
+
+    <div id="tree" class="tree">🌱</div>
+
+    <h2 id="title"></h2>
+
+    <p id="text"></p>
+
+    <button class="restart" onclick="location.reload()">Refazer Quiz</button>
+
+</div>
+
+</div>
+
+<script>
+
+const questions = [
+{
+q:"Você recebe uma oportunidade difícil. O que faz?",
+a:["Nem tento","Penso muito","Tento com medo","Aceito o desafio"],
+p:[0,1,2,3]
+},
+{
+q:"Quando um plano falha:",
+a:["Desisto","Fico desanimado","Ajusto","Persisto"],
+p:[0,1,2,3]
+},
+{
+q:"Uma hora livre:",
+a:["Perco tempo","Descanso","Faço algo útil","Aprendo algo novo"],
+p:[0,1,2,3]
+},
+{
+q:"Quando alguém vence você:",
+a:["Inveja","Sorte dele","Me comparo","Me inspiro"],
+p:[0,1,2,3]
+},
+{
+q:"Qual frase te representa?",
+a:["Não mudo","É difícil","Posso melhorar","Sempre posso crescer"],
+p:[0,1,2,3]
+},
+{
+q:"Quando surge um problema:",
+a:["Ignoro","Peço ajuda","Tento resolver","Resolvo"],
+p:[0,1,2,3]
+},
+{
+q:"Sobre o futuro:",
+a:["Tenho medo","Espero","Tenho objetivos","Tenho metas"],
+p:[0,1,2,3]
+},
+{
+q:"Crítica construtiva:",
+a:["Me ofendo","Fico mal","Reflito","Aprendo"],
+p:[0,1,2,3]
+},
+{
+q:"Sua vida hoje seria uma árvore:",
+a:["Seca","Pequena","Crescendo","Forte"],
+p:[0,1,2,3]
+},
+{
+q:"Aprender algo novo:",
+a:["Evito","Obrigação","Interesse","Amo aprender"],
+p:[0,1,2,3]
+},
+{
+q:"Semente do futuro:",
+a:["Conforto","Segurança","Conhecimento","Disciplina"],
+p:[0,1,2,3]
+}
+];
+
+let i=0;
+let score=0;
+
+function load(){
+
+if(i<questions.length){
+
+document.getElementById("counter").innerText = `Pergunta ${i+1} de ${questions.length}`;
+
+document.getElementById("question").innerText = questions[i].q;
+
+let html="";
+
+questions[i].a.forEach((a,idx)=>{
+
+html+=`<button class='btn' onclick='next(${questions[i].p[idx]})'>${a}</button>`;
+
+});
+
+document.getElementById("answers").innerHTML=html;
+
+document.getElementById("bar").style.width = ((i/questions.length)*100)+"%";
+
+}else{
+result();
+}
+
+}
+
+function next(p){
+score+=p;
+i++;
+load();
+}
+
+function result(){
+
+document.getElementById("quiz").style.display="none";
+document.getElementById("result").style.display="block";
+
+let t="",txt="",tree="";
+
+if(score<=8){
+t="🌱 Semente";
+txt="Você está no início da jornada e precisa desenvolver hábitos.";
+tree="🌱";
+}
+else if(score<=16){
+t="🌿 Broto";
+txt="Você está evoluindo e criando boas bases.";
+tree="🌿";
+}
+else if(score<=26){
+t="🌳 Árvore Jovem";
+txt="Você está crescendo com consciência.";
+tree="🌳";
+}
+else{
+t="🌳✨ Árvore Forte";
+txt="Você tem uma mentalidade de crescimento forte!";
+tree="🌳✨";
+}
+
+document.getElementById("title").innerText=t;
+document.getElementById("text").innerText=txt;
+document.getElementById("tree").innerText=tree;
+
+}
+
+load();
+
+</script>
+
+</body>
+</html>
